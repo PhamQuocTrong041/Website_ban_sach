@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Kết quả thanh toán";
+}
+
+@if (ViewBag.ResultCode == "0")
+{
+    <div class="alert alert-success">
+        Thanh toán thành công.
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">
+        Thanh toán thất bại.
+    </div>
+}
+
+<a asp-controller="Home"
+   asp-action="Index"
+   class="btn btn-primary">
+    Về trang chủ
+</a>

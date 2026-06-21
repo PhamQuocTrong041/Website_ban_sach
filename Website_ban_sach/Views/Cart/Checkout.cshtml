@@ -91,9 +91,9 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="payment-method-card text-center p-3 rounded-3 d-flex flex-column align-items-center justify-content-center h-100">
-                                    <input type="radio" asp-for="PaymentMethod" value="BankTransfer" class="d-none" />
+                                    <input type="radio" asp-for="PaymentMethod" value="MOMO" class="d-none" />
                                     <i class="fa-solid fa-building-columns text-secondary fs-3 mb-2"></i>
-                                    <span class="fw-bold text-dark small d-block">Chuyển khoản ngân hàng</span>
+                                    <span class="fw-bold text-dark small d-block">Thanh toán MoMo</span>
                                     <small class="text-muted text-center" style="font-size: 11px; max-width: 180px;">Quét mã QR VietQR chuyển khoản nhanh bằng điện thoại</small>
                                 </label>
                             </div>
@@ -168,8 +168,8 @@
                 var selectedVal = $(this).val();
                 if (selectedVal === 'COD') {
                     $('#payment-note').html('<i class="fa-solid fa-circle-info text-purple-main me-1"></i> Bạn sẽ thanh toán bằng tiền mặt trực tiếp cho nhân viên giao hàng khi nhận được sách.');
-                } else {
-                    $('#payment-note').html('<i class="fa-solid fa-circle-info text-purple-main me-1"></i> Hệ thống sẽ tạo mã QR và thông tin chuyển khoản ngân hàng sau khi bạn nhấn nút "Xác nhận đặt hàng".');
+                } else if (selectedVal === 'MOMO'){
+                        $('#payment-note').html('<i class="fa-solid fa-circle-info text-purple-main me-1"></i> Bạn sẽ được chuyển sang cổng thanh toán MoMo sau khi xác nhận đơn hàng.');
                 }
             });
         });

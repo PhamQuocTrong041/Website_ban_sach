@@ -12,7 +12,6 @@ namespace Website_ban_sach.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public string UserId { get; set; } = string.Empty;
 
         [Required]
@@ -48,5 +47,7 @@ namespace Website_ban_sach.Models
 
         // Mối quan hệ Một - Nhiều với OrderItem
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+        
     }
 }

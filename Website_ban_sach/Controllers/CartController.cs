@@ -145,6 +145,7 @@ namespace Website_ban_sach.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Checkout(Order model)
         {
+            
             var cart = GetCartItems();
             if (!cart.Any())
             {
@@ -191,6 +192,14 @@ namespace Website_ban_sach.Controllers
 
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
+
+                if (model.PaymentMethod == "MOMO")
+                {
+                    return RedirectToAction(
+                        "CreateMomoPayment",
+                        "Payment",
+                        new { orderId = order.Id });
+                }
 
                 // Xóa giỏ hàng trong session
                 HttpContext.Session.Remove(CART_KEY);
