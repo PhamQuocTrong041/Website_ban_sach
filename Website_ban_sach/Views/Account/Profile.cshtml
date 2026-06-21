@@ -1,0 +1,298 @@
+@model Website_ban_sach.Models.ProfileViewModel
+@{
+    ViewData["Title"] = "Thông tin tài khoản";
+    var orders = ViewBag.Orders as IEnumerable<Website_ban_sach.Models.Order> ?? new List<Website_ban_sach.Models.Order>();
+    var viewedProducts = ViewBag.ViewedProducts as IEnumerable<Website_ban_sach.Models.Product> ?? new List<Website_ban_sach.Models.Product>();
+}
+
+<style>
+    .profile-card {
+        border: 1px solid #f3e8f5;
+        border-radius: 12px;
+        background-color: #fff;
+    }
+    .nav-tabs .nav-link {
+        color: #495057;
+        font-weight: 500;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 12px 20px;
+    }
+    .nav-tabs .nav-link.active {
+        color: #ff79c6 !important;
+        border-bottom: 3px solid #ff79c6;
+        background-color: transparent;
+    }
+    .nav-tabs .nav-link:hover {
+        border-color: transparent;
+        color: #ff79c6;
+    }
+    .btn-profile-save {
+        background-color: #ff79c6;
+        color: white;
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+    .btn-profile-save:hover {
+        background-color: #e05ca7;
+        color: white;
+    }
+    .form-control:focus {
+        border-color: #ff79c6;
+        box-shadow: 0 0 0 0.25rem rgba(255, 121, 198, 0.25);
+    }
+    .text-purple-main {
+        color: #ff79c6 !important;
+    }
+    .order-item-card {
+        background-color: #fffcfd;
+        border: 1px solid #f9f1f6;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="container my-5" style="min-height: 550px;">
+    <!-- Thông báo kết quả thành công -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4 text-center" role="alert">
+            <i class="fa-solid fa-circle-check me-2 text-success"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Sidebar nhỏ hiển thị tóm tắt Avatar user -->
+        <div class="col-lg-3">
+            <div class="card profile-card shadow-sm p-4 text-center">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center bg-light border text-secondary rounded-circle" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-user fs-1"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-1">@Model.Username</h5>
+                <span class="badge bg-light text-muted border px-2.5 py-1.5 rounded-pill small">Thành viên Bookstore</span>
+                <hr class="text-muted my-3">
+                <div class="text-start small">
+                    <p class="text-muted mb-1"><i class="fa-solid fa-envelope me-2"></i> @Model.Email</p>
+                    <p class="text-muted mb-0"><i class="fa-solid fa-phone me-2"></i> @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Chưa cập nhật SĐT" : Model.PhoneNumber)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung Tab chính -->
+        <div class="col-lg-9">
+            <div class="card profile-card shadow-sm p-4">
+                <!-- Thanh điều hướng Tab -->
+                <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="true">
+                            <i class="fa-solid fa-file-invoice me-2"></i> Quản lý đơn hàng
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="viewed-tab" data-bs-toggle="tab" data-bs-target="#viewed" type="button" role="tab" aria-controls="viewed" aria-selected="false">
+                            <i class="fa-solid fa-clock-rotate-left me-2"></i> Sản phẩm đã xem
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit" type="button" role="tab" aria-controls="edit" aria-selected="false">
+                            <i class="fa-solid fa-user-pen me-2"></i> Sửa thông tin tài khoản
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Nội dung các Tab -->
+                <div class="tab-content" id="profileTabsContent">
+                    <!-- Tab 1: Quản lý đơn hàng -->
+                    <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                        @if (!orders.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="fa-solid fa-box-open text-muted mb-3" style="font-size: 60px;"></i>
+                                <h5 class="fw-bold">Bạn chưa đặt đơn hàng nào</h5>
+                                <p class="text-muted small">Hãy chọn mua những cuốn sách tuyệt vời từ BookStore nhé!</p>
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-purple px-4 py-2 mt-2 rounded-3 small shadow-sm">
+                                    Mua sắm ngay
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column gap-4">
+                                @foreach (var order in orders)
+                                {
+                                    <div class="card border rounded-3 p-3 shadow-sm order-item-card">
+                                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                                            <div>
+                                                <span class="fw-bold text-dark">Mã đơn hàng: #@order.Id</span>
+                                                <span class="text-muted ms-3 small">Ngày đặt: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                                            </div>
+                                            <div>
+                                                @if (order.Status == "Chờ xử lý")
+                                                {
+                                                    <span class="badge bg-warning-subtle text-warning border border-warning px-2.5 py-1.5 rounded-pill small">@order.Status</span>
+                                                }
+                                                else if (order.Status == "Đang giao")
+                                                {
+                                                    <span class="badge bg-primary-subtle text-primary border border-primary px-2.5 py-1.5 rounded-pill small">@order.Status</span>
+                                                }
+                                                else if (order.Status == "Đã giao")
+                                                {
+                                                    <span class="badge bg-success-subtle text-success border border-success px-2.5 py-1.5 rounded-pill small">@order.Status</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary px-2.5 py-1.5 rounded-pill small">@order.Status</span>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-7">
+                                                <h6 class="fw-bold text-dark small mb-2"><i class="fa-solid fa-location-dot text-purple-main me-1"></i> Thông tin giao hàng</h6>
+                                                <div class="small text-muted">
+                                                    <p class="mb-1"><strong>Người nhận:</strong> @order.ReceiverName</p>
+                                                    <p class="mb-1"><strong>SĐT:</strong> @order.ReceiverPhone</p>
+                                                    <p class="mb-0"><strong>Địa chỉ:</strong> @order.ReceiverAddress</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 text-md-end d-flex flex-column justify-content-end align-items-md-end">
+                                                <span class="text-muted small">Tổng tiền đơn hàng:</span>
+                                                <span class="fw-bold text-purple-main fs-4">@order.TotalAmount.ToString("N0")đ</span>
+                                            </div>
+                                        </div>
+
+                                        <h6 class="fw-bold text-dark small mb-2 border-top pt-2"><i class="fa-solid fa-book-open text-purple-main me-1"></i> Sản phẩm đã mua</h6>
+                                        <div class="d-flex flex-column gap-2">
+                                            @foreach (var item in order.OrderItems)
+                                            {
+                                                <div class="d-flex align-items-center justify-content-between py-1 bg-white px-2 border rounded-2">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <img src="@(item.Product?.ImageUrl ?? "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=150")" class="rounded border" style="width: 32px; height: 42px; object-fit: cover;" />
+                                                        <span class="small text-dark fw-medium">@(item.Product?.Title ?? "Sản phẩm không còn khả dụng")</span>
+                                                    </div>
+                                                    <div class="text-end small">
+                                                        <span class="text-muted">@item.Quantity x </span>
+                                                        <span class="fw-bold text-purple-main">@item.Price.ToString("N0")đ</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Tab 2: Sản phẩm đã xem -->
+                    <div class="tab-pane fade" id="viewed" role="tabpanel" aria-labelledby="viewed-tab">
+                        @if (!viewedProducts.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="fa-solid fa-clock-rotate-left text-muted mb-3" style="font-size: 60px;"></i>
+                                <h5 class="fw-bold">Bạn chưa xem cuốn sách nào</h5>
+                                <p class="text-muted small">Hãy nhấn xem chi tiết các cuốn sách trên trang chủ để lưu vết lại.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row row-cols-2 row-cols-md-4 g-3">
+                                @foreach (var item in viewedProducts)
+                                {
+                                    <div class="col">
+                                        <div class="card h-100 p-2 shadow-sm border" style="border-radius: 8px;">
+                                            <a asp-controller="Home" asp-action="Details" asp-route-id="@item.Id">
+                                                <img src="@item.ImageUrl" class="card-img-top rounded" style="height: 140px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300'">
+                                            </a>
+                                            <div class="card-body p-2 d-flex flex-column justify-content-between" style="min-height: 100px;">
+                                                <div>
+                                                    <h6 class="card-title text-dark fw-bold text-truncate mb-1" style="font-size: 13px;" title="@item.Title">
+                                                        <a asp-controller="Home" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Title</a>
+                                                    </h6>
+                                                    <small class="text-muted d-block mb-1" style="font-size: 11px;">@item.Author</small>
+                                                </div>
+                                                <div>
+                                                    <span class="text-purple-main fw-bold d-block small">@item.Price.ToString("N0")đ</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Tab 3: Chỉnh sửa thông tin tài khoản -->
+                    <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                        <form asp-action="Profile" method="post" class="p-2">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-medium text-secondary small">Tên đăng nhập</label>
+                                    <input asp-for="Username" class="form-control bg-light" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Email" class="form-label fw-medium text-secondary small"></label>
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-12">
+                                    <label asp-for="PhoneNumber" class="form-label fw-medium text-secondary small"></label>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại của bạn..." />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-12 my-3">
+                                    <hr class="text-muted">
+                                    <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-key text-purple-main me-1"></i> Thay đổi mật khẩu (Bỏ trống nếu không muốn đổi)</h6>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label asp-for="CurrentPassword" class="form-label fw-medium text-secondary small"></label>
+                                    <input asp-for="CurrentPassword" class="form-control" placeholder="Nhập mật khẩu hiện tại..." />
+                                    <span asp-validation-for="CurrentPassword" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="NewPassword" class="form-label fw-medium text-secondary small"></label>
+                                    <input asp-for="NewPassword" class="form-control" placeholder="Nhập mật khẩu mới..." />
+                                    <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="ConfirmPassword" class="form-label fw-medium text-secondary small"></label>
+                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Xác nhận mật khẩu mới..." />
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                                </div>
+
+                                <div class="col-md-12 mt-4">
+                                    <button type="submit" class="btn btn-profile-save px-5 py-2.5 rounded-3 shadow-sm">
+                                        <i class="fa-solid fa-floppy-disk me-2"></i> Lưu thay đổi
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <!-- Giữ nguyên tab đang hoạt động khi submit form bị reload -->
+    <script>
+        $(document).ready(function() {
+            var activeTab = localStorage.getItem('activeProfileTab');
+            if (activeTab) {
+                $('#profileTabs button[data-bs-target="' + activeTab + '"]').tab('show');
+            }
+
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
+                var target = $(e.target).data('bs-target');
+                localStorage.setItem('activeProfileTab', target);
+            });
+        });
+    </script>
+}

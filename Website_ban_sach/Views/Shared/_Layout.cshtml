@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BookStore</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Website_ban_sach.styles.css" asp-append-version="true" />
+    <style>
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #fcfaff;
+            }
+
+            /* Định nghĩa bộ màu Hồng Tím mới */
+            .text-purple-main {
+                color: #ff79c6 !important;
+            }
+
+            .bg-purple-main {
+                background-color: #ff79c6 !important;
+            }
+
+            .bg-dark-purple {
+                background-color: #21132b !important;
+            }
+            /* Nền tối ánh tím */
+            .border-purple-main {
+                border-color: #ff79c6 !important;
+            }
+
+            .btn-purple {
+                background-color: #ff79c6;
+                color: white;
+                border: none;
+            }
+
+                .btn-purple:hover {
+                    background-color: #e05ca7;
+                    color: white;
+                }
+
+            .nav-top-link {
+                text-decoration: none;
+                color: #4a4a4a;
+                font-size: 14px;
+                position: relative;
+                transition: color 0.2s;
+            }
+
+                .nav-top-link:hover {
+                    color: #ff79c6;
+                }
+
+                    .nav-top-link:hover i {
+                        color: #ff79c6 !important;
+                    }
+
+            .badge-cart {
+                position: absolute;
+                top: -5px;
+                right: -10px;
+                background-color: #ff79c6;
+                font-size: 10px;
+            }
+    </style>
+</head>
+<body>
+    <header class="bg-white border-bottom shadow-sm sticky-top">
+        <div class="container py-3">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center text-md-start">
+                    <a class="navbar-brand d-flex align-items-center text-purple-main fw-bold fs-3" asp-controller="Home" asp-action="Index">
+                        <i class="fa-solid fa-book-open me-2"></i> Nhóm 5
+                    </a>
+                    <small class="text-muted d-block ms-5" style="font-size: 11px; margin-top: -5px;">Trí thức mở lối tương lai</small>
+                </div>
+                <div class="col-md-5 my-2 my-md-0">
+                    <form asp-controller="Home" asp-action="Index" method="get" class="input-group">
+                        <input type="text" name="searchString" value="@ViewBag.CurrentSearch" class="form-control border-purple-main" placeholder="Tìm kiếm sách, tác giả..." aria-label="Search">
+                        @if (ViewBag.CurrentCategoryId != null)
+                        {
+                            <input type="hidden" name="categoryId" value="@ViewBag.CurrentCategoryId" />
+                        }
+                        <button class="btn btn-purple" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="col-md-4 d-flex justify-content-center justify-content-md-end gap-3 align-items-center text-center">
+                    @using Microsoft.AspNetCore.Identity
+                    @using Microsoft.AspNetCore.Http
+                    @inject SignInManager<IdentityUser> SignInManager
+                    @inject UserManager<IdentityUser> UserManager
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <div class="dropdown me-2">
+                            <a class="nav-top-link dropdown-toggle d-block" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-regular fa-user d-block fs-4 text-secondary mb-1"></i>
+                                <span>@User.Identity?.Name</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item py-2 fw-medium text-purple-main" asp-controller="Account" asp-action="Profile"><i class="fa-regular fa-circle-user me-2"></i> Thông tin tài khoản</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><a class="dropdown-item py-2 fw-medium text-purple-main" asp-controller="Dashboard" asp-action="Index"><i class="fa-solid fa-gauge me-2"></i> Trang quản trị (Admin)</a></li>
+                                    <li><a class="dropdown-item py-2 fw-medium text-purple-main" asp-controller="Admin" asp-action="Index"><i class="fa-solid fa-users-gear me-2"></i> Quản lý thành viên</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                }
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item py-2 text-danger border-0 bg-transparent w-100 text-start"><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="nav-top-link">
+                            <i class="fa-regular fa-user d-block fs-4 text-secondary mb-1"></i>
+                            <span>Đăng nhập/Đăng ký</span>
+                        </a>
+                    }
+
+                    <a asp-controller="Home" asp-action="Wishlist" class="nav-top-link">
+                        <i class="fa-regular fa-heart d-block fs-4 text-secondary mb-1"></i>
+                        <span>Yêu thích</span>
+                    </a>
+                    <a asp-controller="Cart" asp-action="Index" class="nav-top-link position-relative me-2">
+                        <i class="fa-solid fa-basket-shopping d-block fs-4 text-secondary mb-1"></i>
+                        <span>Giỏ hàng</span>
+                        @{
+                            string? sessionData = Context.Session.GetString("CartSessionKey");
+                            int cartCount = 0;
+                            if (!string.IsNullOrEmpty(sessionData))
+                            {
+                                var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<Website_ban_sach.Models.CartItem>>(sessionData);
+                                cartCount = cartItems?.Sum(i => i.Quantity) ?? 0;
+                            }
+                        }
+                        <span class="badge rounded-pill badge-cart">@cartCount</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-md navbar-light border-top p-0 bg-dark-purple">
+            <div class="container">
+                <button class="navbar-toggler my-2 bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav w-100 fw-medium">
+                        <li class="nav-item bg-purple-main me-3 d-none d-md-block" style="cursor: pointer;">
+                            <a class="nav-link text-white px-4" id="btn-toggle-category">
+                                <i class="fa-solid fa-bars me-2"></i> Danh mục
+                            </a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link text-white px-3 py-2 text-purple-main" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link text-white-50 px-3 py-2" href="#">Sách mới</a></li>
+                        <li class="nav-item"><a class="nav-link text-white-50 px-3 py-2" href="#">Sách bán chạy</a></li>
+                        <li class="nav-item"><a class="nav-link text-white-50 px-3 py-2" href="#">Tác giả</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid p-0">
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-dark-purple border-top pt-5 pb-3 text-white mt-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <h5 class="text-purple-main fw-bold mb-3"><i class="fa-solid fa-book-open me-2"></i> BookStore</h5>
+                    <p class="text-white-50 small">BookStore là nhà sách trực tuyến uy tín, cung cấp hàng ngàn đầu sách chất lượng, đa dạng thể loại với giá tốt nhất cho bạn đọc.</p>
+                    <div class="d-flex gap-3 fs-5">
+                        <a href="#" class="text-white-50"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="text-white-50"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="text-white-50"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 ms-auto">
+                    <h6 class="fw-bold mb-3 text-purple-main">Về chúng tôi</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2">
+                        <li><a href="#" class="text-decoration-none text-white-50">Giới thiệu</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-2">
+                    <h6 class="fw-bold mb-3 text-purple-main">Hỗ trợ khách hàng</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2">
+                        <li><a href="#" class="text-decoration-none text-white-50">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#" class="text-decoration-none text-white-50">Phương thức thanh toán</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-3 text-purple-main">Thông tin liên hệ</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 text-white-50">
+                        <li><i class="fa-solid fa-location-dot me-2 text-purple-main"></i> Đường a, xã b, quận c</li>
+                        <li><i class="fa-solid fa-phone me-2 text-purple-main"></i> 0123 456 789</li>
+                        <li><i class="fa-solid fa-envelope me-2 text-purple-main"></i> support@Nhom5.vn</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 text-white-50">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center small text-white-50">
+                <p class="mb-0">Nhom 5: Quốc Trọng, Vủ Nguyên, Minh Hiển</p>
+                <div class="d-flex gap-2 fs-4">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btn-toggle-category").click(function (e) {
+                e.preventDefault();
+                // Tìm khối sidebar bên trang Index và bật/tắt hiệu ứng fade mượt mà
+                $(".category-sidebar-wrapper").slideToggle(300);
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

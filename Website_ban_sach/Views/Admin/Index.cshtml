@@ -1,0 +1,135 @@
+@model IEnumerable<Website_ban_sach.Models.UserRoleViewModel>
+@{
+    ViewData["Title"] = "Quản lý thành viên";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container my-4" style="min-height: 500px;">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fa-solid fa-users-gear me-2 text-purple-main"></i> Quản Lý Thành Viên</h2>
+            <p class="text-muted mb-0 small">Danh sách tài khoản trong hệ thống và phân quyền (Admin / Customer).</p>
+        </div>
+        <a asp-controller="ProductManager" asp-action="Index" class="btn btn-outline-secondary px-4 py-2 small fw-medium">
+            <i class="fa-solid fa-list-check me-2"></i> Quản lý sách
+        </a>
+    </div>
+
+    <!-- Thông báo kết quả -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
+            <i class="fa-solid fa-circle-xmark me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark" style="background-color: #21132b;">
+                        <tr>
+                            <th scope="col" class="py-3 ps-4">Tên đăng nhập</th>
+                            <th scope="col" class="py-3">Email</th>
+                            <th scope="col" class="py-3">Vai trò hiện tại</th>
+                            <th scope="col" class="py-3 text-center" style="width: 320px;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-users fs-2 d-block mb-3 text-purple-main"></i>
+                                    Không tìm thấy người dùng nào trong hệ thống.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">
+                                        <i class="fa-regular fa-user me-2 text-secondary"></i> @user.Username
+                                    </td>
+                                    <td>@user.Email</td>
+                                    <td>
+                                        @foreach (var role in user.Roles)
+                                        {
+                                            @if (role == "Admin")
+                                            {
+                                                <span class="badge bg-danger px-2.5 py-1.5 rounded-pill me-1">
+                                                    <i class="fa-solid fa-user-shield me-1"></i> Quản trị viên
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-primary px-2.5 py-1.5 rounded-pill me-1">
+                                                    <i class="fa-solid fa-user me-1"></i> Khách hàng
+                                                </span>
+                                            }
+                                        }
+                                        @if (!user.Roles.Any())
+                                        {
+                                            <span class="badge bg-secondary px-2.5 py-1.5 rounded-pill">
+                                                Chưa có vai trò
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (user.Username == User.Identity?.Name)
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary px-3 py-1.5 rounded-pill small">
+                                                <i class="fa-solid fa-user-check me-1"></i> Tài khoản của bạn
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <!-- Nút đổi vai trò -->
+                                                <form asp-action="ToggleRole" method="post" class="d-inline">
+                                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                                    @Html.AntiForgeryToken()
+                                                    @if (user.Roles.Contains("Admin"))
+                                                    {
+                                                        <button type="submit" class="btn btn-sm btn-outline-warning px-3">
+                                                            <i class="fa-solid fa-user-minus me-1"></i> Hạ cấp Customer
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="submit" class="btn btn-sm btn-outline-success px-3">
+                                                            <i class="fa-solid fa-user-plus me-1"></i> Nâng cấp Admin
+                                                        </button>
+                                                    }
+                                                </form>
+
+                                                <!-- Nút xóa tài khoản -->
+                                                <form asp-action="DeleteUser" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản \'' + '@user.Username' + '\' này không? Hành động này không thể hoàn tác!')">
+                                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3">
+                                                        <i class="fa-solid fa-trash-can me-1"></i> Xóa
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

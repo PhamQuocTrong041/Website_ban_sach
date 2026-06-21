@@ -1,0 +1,99 @@
+@model Website_ban_sach.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<style>
+    .auth-card {
+        border: 1px solid #f3e8f5;
+        border-radius: 12px;
+        background-color: #fff;
+        box-shadow: 0 4px 20px rgba(255, 121, 198, 0.1);
+    }
+    .auth-header {
+        background-color: #21132b;
+        color: white;
+        border-top-left-radius: 11px;
+        border-top-right-radius: 11px;
+        padding: 20px;
+        text-align: center;
+    }
+    .btn-auth {
+        background-color: #ff79c6;
+        color: white;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+    .btn-auth:hover {
+        background-color: #e05ca7;
+        color: white;
+    }
+    .auth-link {
+        color: #ff79c6;
+        text-decoration: none;
+    }
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+    .form-control:focus {
+        border-color: #ff79c6;
+        box-shadow: 0 0 0 0.25rem rgba(255, 121, 198, 0.25);
+    }
+</style>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card auth-card">
+                <div class="auth-header">
+                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-arrow-right-to-bracket me-2 text-purple-main"></i> Đăng Nhập</h4>
+                    <small class="text-white-50">Chào mừng bạn quay lại nhà sách BookStore</small>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label fw-medium small text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-secondary border-end-0"><i class="fa-solid fa-user"></i></span>
+                                <input asp-for="Username" class="form-control border-start-0 ps-0" placeholder="Nhập tên đăng nhập..." />
+                            </div>
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-medium small text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-secondary border-end-0"><i class="fa-solid fa-lock"></i></span>
+                                <input asp-for="Password" class="form-control border-start-0 ps-0" placeholder="Nhập mật khẩu..." />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4 d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" class="form-check-input" style="cursor: pointer;" />
+                                <label asp-for="RememberMe" class="form-check-label small text-secondary" style="cursor: pointer;"></label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-auth w-100 py-2 rounded-3 shadow-sm">
+                            <i class="fa-solid fa-right-to-bracket me-2"></i> Đăng Nhập
+                        </button>
+                    </form>
+
+                    <hr class="text-muted my-4">
+                    <div class="text-center small">
+                        <span>Chưa có tài khoản?</span>
+                        <a asp-action="Register" class="auth-link fw-semibold ms-1">Đăng ký ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

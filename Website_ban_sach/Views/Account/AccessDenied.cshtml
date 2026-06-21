@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Từ chối truy cập";
+}
+
+<div class="container my-5 text-center" style="min-height: 400px;">
+    <div class="py-5">
+        <i class="fa-solid fa-triangle-exclamation text-danger" style="font-size: 80px;"></i>
+        <h2 class="fw-bold mt-4">Từ Chối Truy Cập!</h2>
+        <p class="text-muted fs-5 mt-2">Bạn không có quyền truy cập vào trang này. Trang này chỉ dành cho quản trị viên (Admin).</p>
+        <div class="mt-4 d-flex justify-content-center gap-3">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-purple px-4 py-2">
+                <i class="fa-solid fa-house me-2"></i> Về trang chủ
+            </a>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary px-4 py-2">
+                <i class="fa-solid fa-right-to-bracket me-2"></i> Đăng nhập tài khoản khác
+            </a>
+        </div>
+    </div>
+</div>

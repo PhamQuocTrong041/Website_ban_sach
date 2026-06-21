@@ -1,0 +1,245 @@
+@model IEnumerable<Website_ban_sach.Models.Product>
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<style>
+    .category-sidebar .list-group-item {
+        padding: 10px 15px;
+        border: none;
+        font-size: 14px;
+        color: #495057;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .category-sidebar .list-group-item:hover {
+        background-color: #fff0f8;
+        color: #ff79c6;
+    }
+
+    .category-sidebar .list-group-item.active {
+        background-color: #ff79c6;
+        color: white !important;
+    }
+
+    .utility-box {
+        border: 1px solid #f3e8f5;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+
+    .cat-item-card {
+        border: 1px solid #f3e8f5;
+        border-radius: 12px;
+        transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .cat-item-card:hover {
+        transform: translateY(-5px);
+        border-color: #ff79c6;
+    }
+
+    .product-card {
+        border: 1px solid #f3e8f5;
+        border-radius: 8px;
+        position: relative;
+        transition: box-shadow 0.3s, border-color 0.3s;
+        background: #fff;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 4px 15px rgba(255, 121, 198, 0.15);
+        border-color: #ff79c6;
+    }
+
+    .discount-tag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #ff79c6;
+        color: white;
+        padding: 2px 7px;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 4px;
+        z-index: 2;
+    }
+
+    .btn-add-cart {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        border: 1px solid #f3e8f5;
+        background: #fff;
+        color: #ff79c6;
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .btn-add-cart:hover {
+        background: #ff79c6;
+        color: #fff;
+        border-color: #ff79c6;
+    }
+
+    .text-purple {
+        color: #ff79c6 !important;
+    }
+</style>
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4 text-center" role="alert">
+            <i class="fa-solid fa-circle-check me-2 text-success"></i> @Html.Raw(TempData["SuccessMessage"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="row mb-4">
+        <!-- Sidebar Danh mục -->
+        <div class="col-lg-3 d-none d-lg-block category-sidebar-wrapper">
+            <div class="card category-sidebar shadow-sm">
+                <div class="list-group list-group-flush">
+                    <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action @(ViewBag.CurrentCategoryId == null ? "active" : "")">
+                        <i class="fa-solid fa-list me-2"></i> Tất cả danh mục
+                    </a>
+                    @if (ViewBag.Categories != null)
+                    {
+                        foreach (var cat in (IEnumerable<Website_ban_sach.Models.Category>)ViewBag.Categories)
+                        {
+                            <a asp-controller="Home" asp-action="Index" asp-route-categoryId="@cat.Id" class="list-group-item list-group-item-action @(ViewBag.CurrentCategoryId == cat.Id ? "active" : "")">
+                                <i class="fa-solid @(string.IsNullOrEmpty(cat.Icon) ? "fa-bookmark" : cat.Icon) me-2 text-purple"></i> @cat.Name
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner chính -->
+        <div class="col-lg-9 col-md-12">
+            <div id="heroBanner" class="carousel slide shadow-sm rounded" data-bs-ride="carousel">
+                <div class="carousel-inner rounded">
+                    <div class="carousel-item active">
+                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=1000" class="d-block w-100" style="height: 380px; object-fit: cover;">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3" style="bottom: 40px;">
+                            <h2 class="fw-bold text-purple">ĐỌC SÁCH HAY - MỞ MANG TRÍ TUỆ</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Danh mục nổi bật -->
+    <div class="mb-5">
+        <h4 class="fw-bold mb-3 text-dark">Danh mục nổi bật</h4>
+        <div class="row g-3">
+            @if (ViewBag.Categories != null)
+            {
+                foreach (var cat in (IEnumerable<Website_ban_sach.Models.Category>)ViewBag.Categories)
+                {
+                    <div class="col-6 col-md-2">
+                        <a asp-controller="Home" asp-action="Index" asp-route-categoryId="@cat.Id" class="text-decoration-none">
+                            <div class="card cat-item-card p-3 text-center shadow-sm" style="background-color: #fff0f6; border: 1px solid @(ViewBag.CurrentCategoryId == cat.Id ? "#ff79c6" : "transparent");">
+                                <i class="fa-solid @(string.IsNullOrEmpty(cat.Icon) ? "fa-book" : cat.Icon) text-purple fs-2 mb-2"></i>
+                                <h6 class="fw-bold text-dark small mb-1">@cat.Name</h6>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Danh sách sản phẩm -->
+    <div class="mb-5">
+        <h4 class="fw-bold mb-3 text-dark">
+            @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch))
+            {
+                <span>Kết quả tìm kiếm cho: "@ViewBag.CurrentSearch"</span>
+            }
+            else if (ViewBag.CurrentCategoryId != null && ViewBag.Categories != null)
+            {
+                var selectedCat = ((IEnumerable<Website_ban_sach.Models.Category>)ViewBag.Categories).FirstOrDefault(c => c.Id == ViewBag.CurrentCategoryId);
+                <span>Danh mục: @(selectedCat?.Name ?? "Sách")</span>
+            }
+            else
+            {
+                <span>Tất cả sách</span>
+            }
+        </h4>
+
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
+            @if (!Model.Any())
+            {
+                <div class="col-12 text-center py-5 w-100">
+                    <i class="fa-solid fa-magnifying-glass text-muted mb-3" style="font-size: 40px;"></i>
+                    <p class="text-muted">Không tìm thấy cuốn sách nào phù hợp với yêu cầu của bạn.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <div class="col">
+                        <div class="card product-card h-100 p-2 shadow-sm">
+                            @if (item.OldPrice.HasValue && item.OldPrice > item.Price)
+                            {
+                                int discount = (int)((1 - (item.Price / item.OldPrice.Value)) * 100);
+                                <span class="discount-tag">-@discount%</span>
+                            }
+                            <a asp-action="Details" asp-route-id="@item.Id">
+                                <img src="@item.ImageUrl" class="card-img-top rounded" style="height: 180px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300'">
+                            </a>
+                            <div class="card-body p-2 d-flex flex-column justify-content-between">
+                                <div>
+                                    <h6 class="card-title text-dark fw-semibold text-truncate mb-1" style="font-size: 14px;" title="@item.Title">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Title</a>
+                                    </h6>
+                                    <small class="text-muted d-block mb-1" style="font-size: 12px;">@item.Author</small>
+                                    <div class="text-warning mb-2" style="font-size: 11px;">
+                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="text-purple fw-bold d-block" style="font-size: 14px;">@item.Price.ToString("N0")đ</span>
+                                    @if (item.OldPrice.HasValue && item.OldPrice > item.Price)
+                                    {
+                                        <del class="text-muted" style="font-size: 12px;">@item.OldPrice.Value.ToString("N0")đ</del>
+                                    }
+                                </div>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="mt-2 pt-2 border-top d-flex gap-1 justify-content-between">
+                                        <a asp-controller="ProductManager" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary py-0.5 px-2" style="font-size: 11px;">
+                                            <i class="fa-solid fa-pen"></i> Sửa
+                                        </a>
+                                        <a asp-controller="ProductManager" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger py-0.5 px-2" style="font-size: 11px;">
+                                            <i class="fa-solid fa-trash"></i> Xóa
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <!-- Nút thêm vào giỏ hàng -->
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn-add-cart border-0" title="Thêm vào giỏ hàng">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

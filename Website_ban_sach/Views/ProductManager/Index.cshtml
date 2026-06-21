@@ -1,0 +1,90 @@
+@model IEnumerable<Website_ban_sach.Models.Product>
+@{
+    ViewData["Title"] = "Quản lý sách";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container my-4" style="min-height: 500px;">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fa-solid fa-list-check me-2 text-purple-main"></i> Quản Lý Sách</h2>
+            <p class="text-muted mb-0 small">Thêm mới, sửa đổi, cập nhật thông tin và xóa sách khỏi hệ thống.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-purple px-4 py-2 shadow-sm fw-medium">
+            <i class="fa-solid fa-plus me-2"></i> Thêm sách mới
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark" style="background-color: #21132b;">
+                        <tr>
+                            <th scope="col" class="py-3 ps-4" style="width: 80px;">Hình ảnh</th>
+                            <th scope="col" class="py-3">Tiêu đề sách</th>
+                            <th scope="col" class="py-3">Tác giả</th>
+                            <th scope="col" class="py-3">Danh mục</th>
+                            <th scope="col" class="py-3 text-end">Giá bán</th>
+                            <th scope="col" class="py-3 text-end" style="width: 100px;">Kho</th>
+                            <th scope="col" class="py-3 text-center" style="width: 180px;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-folder-open fs-2 d-block mb-3 text-purple-main"></i>
+                                    Chưa có cuốn sách nào trong hệ thống. Hãy thêm mới!
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <img src="@item.ImageUrl" class="rounded border shadow-sm" style="width: 50px; height: 65px; object-fit: cover;" />
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-dark d-block">@item.Title</span>
+                                        <small class="text-muted">Ngày tạo: @item.CreatedDate.ToString("dd/MM/yyyy")</small>
+                                    </td>
+                                    <td>@item.Author</td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border px-2 py-1 small rounded-pill">
+                                            <i class="fa-solid fa-bookmark me-1 text-purple-main"></i> @(item.Category?.Name ?? "N/A")
+                                        </span>
+                                    </td>
+                                    <td class="text-end fw-semibold text-purple-main">@item.Price.ToString("N0")đ</td>
+                                    <td class="text-end">
+                                        @if (item.StockQuantity > 0)
+                                        {
+                                            <span class="badge bg-success-subtle text-success px-2 py-1">@item.StockQuantity</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger px-2 py-1">Hết hàng</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary px-3">
+                                                <i class="fa-solid fa-pen-to-square me-1"></i> Sửa
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger px-3">
+                                                <i class="fa-solid fa-trash me-1"></i> Xóa
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

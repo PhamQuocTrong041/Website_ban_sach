@@ -1,0 +1,160 @@
+@model IEnumerable<Website_ban_sach.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+    decimal totalCartPrice = Model.Sum(item => item.TotalPrice);
+}
+
+<style>
+    .cart-table th {
+        background-color: #21132b;
+        color: white;
+        font-weight: 600;
+    }
+    .qty-input {
+        width: 60px;
+        text-align: center;
+        border: 1px solid #ced4da;
+    }
+    .qty-btn {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        padding: 2px 8px;
+        cursor: pointer;
+    }
+    .qty-btn:hover {
+        background-color: #e9ecef;
+    }
+    .btn-checkout {
+        background-color: #ff79c6;
+        color: white;
+        font-weight: bold;
+    }
+    .btn-checkout:hover {
+        background-color: #e05ca7;
+        color: white;
+    }
+</style>
+
+<div class="container my-5" style="min-height: 500px;">
+    <h2 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-basket-shopping me-2 text-purple-main"></i> Giỏ Hàng</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fa-solid fa-basket-shopping text-muted mb-4" style="font-size: 80px;"></i>
+            <h3 class="fw-bold">Giỏ hàng của bạn đang trống</h3>
+            <p class="text-muted">Hãy chọn những cuốn sách hay từ BookStore để lấp đầy giỏ hàng nhé!</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-purple px-4 py-2 mt-3">
+                <i class="fa-solid fa-arrow-left me-2"></i> Quay lại cửa hàng
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <!-- Cột danh sách sản phẩm -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 cart-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="py-3 ps-4" style="width: 80px;">Sản phẩm</th>
+                                        <th scope="col" class="py-3">Tiêu đề sách</th>
+                                        <th scope="col" class="py-3 text-end" style="width: 120px;">Đơn giá</th>
+                                        <th scope="col" class="py-3 text-center" style="width: 150px;">Số lượng</th>
+                                        <th scope="col" class="py-3 text-end" style="width: 120px;">Thành tiền</th>
+                                        <th scope="col" class="py-3 text-center" style="width: 80px;">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="ps-4">
+                                                <img src="@item.ImageUrl" class="rounded border" style="width: 50px; height: 65px; object-fit: cover;" />
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-dark d-block">@item.Title</span>
+                                            </td>
+                                            <td class="text-end">@item.Price.ToString("N0")đ</td>
+                                            <td class="text-center">
+                                                <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center justify-content-center">
+                                                    <input type="hidden" name="id" value="@item.ProductId" />
+                                                    <button type="button" class="qty-btn rounded-start" onclick="changeQty(this, -1)">-</button>
+                                                    <input type="text" name="quantity" value="@item.Quantity" class="qty-input" onchange="this.form.submit()" readonly />
+                                                    <button type="button" class="qty-btn rounded-end" onclick="changeQty(this, 1)">+</button>
+                                                </form>
+                                            </td>
+                                            <td class="text-end fw-semibold text-purple-main">@item.TotalPrice.ToString("N0")đ</td>
+                                            <td class="text-center">
+                                                <form asp-action="RemoveFromCart" method="post">
+                                                    <input type="hidden" name="id" value="@item.ProductId" />
+                                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Xóa mặt hàng">
+                                                        <i class="fa-solid fa-trash-can fs-5"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cột hóa đơn / thanh toán -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Tóm tắt đơn hàng</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Tạm tính:</span>
+                        <span class="fw-medium">@totalCartPrice.ToString("N0")đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Phí vận chuyển:</span>
+                        <span class="text-success">Miễn phí</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold text-dark fs-5">Tổng tiền:</span>
+                        <span class="fw-bold text-purple-main fs-5">@totalCartPrice.ToString("N0")đ</span>
+                    </div>
+
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Cart" asp-action="Checkout" class="btn btn-checkout w-100 py-2.5 rounded-3 mb-2 shadow-sm d-block text-center text-decoration-none">
+                            <i class="fa-solid fa-credit-card me-2"></i> Tiến hành thanh toán
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/Cart" class="btn btn-checkout w-100 py-2.5 rounded-3 mb-2 shadow-sm d-block text-center text-decoration-none">
+                            <i class="fa-solid fa-credit-card me-2"></i> Đăng nhập để thanh toán
+                        </a>
+                    }
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100 py-2 rounded-3 small">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Tiếp tục mua sắm
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function changeQty(button, change) {
+            var form = button.form;
+            var input = form.querySelector('.qty-input');
+            var currentVal = parseInt(input.value);
+            var newVal = currentVal + change;
+            if (newVal > 0) {
+                input.value = newVal;
+                form.submit();
+            }
+        }
+    </script>
+}
