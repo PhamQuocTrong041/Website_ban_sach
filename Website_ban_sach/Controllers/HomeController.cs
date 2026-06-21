@@ -109,6 +109,13 @@ namespace Website_ban_sach.Controllers
             return View(); 
         }
 
+        public IActionResult Introduce()
+        {
+            // Lấy danh mục truyền sang layout nếu menu cần dùng, không thì chỉ cần return View()
+            ViewBag.Categories = _context.Categories.ToList();
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

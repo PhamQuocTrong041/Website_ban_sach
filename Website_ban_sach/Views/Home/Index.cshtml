@@ -12,15 +12,15 @@
         transition: background-color 0.2s, color 0.2s;
     }
 
-    .category-sidebar .list-group-item:hover {
-        background-color: #fff0f8;
-        color: #ff79c6;
-    }
+        .category-sidebar .list-group-item:hover {
+            background-color: #fff0f8;
+            color: #ff79c6;
+        }
 
-    .category-sidebar .list-group-item.active {
-        background-color: #ff79c6;
-        color: white !important;
-    }
+        .category-sidebar .list-group-item.active {
+            background-color: #ff79c6;
+            color: white !important;
+        }
 
     .utility-box {
         border: 1px solid #f3e8f5;
@@ -34,10 +34,10 @@
         transition: transform 0.2s, border-color 0.2s;
     }
 
-    .cat-item-card:hover {
-        transform: translateY(-5px);
-        border-color: #ff79c6;
-    }
+        .cat-item-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff79c6;
+        }
 
     .product-card {
         border: 1px solid #f3e8f5;
@@ -47,33 +47,23 @@
         background: #fff;
     }
 
-    .product-card:hover {
-        box-shadow: 0 4px 15px rgba(255, 121, 198, 0.15);
-        border-color: #ff79c6;
-    }
+        .product-card:hover {
+            box-shadow: 0 4px 15px rgba(255, 121, 198, 0.15);
+            border-color: #ff79c6;
+        }
 
-    .discount-tag {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background-color: #ff79c6;
-        color: white;
-        padding: 2px 7px;
-        font-size: 12px;
-        font-weight: bold;
-        border-radius: 4px;
-        z-index: 2;
-    }
-
-    .btn-add-cart {
+    /* Style cho form nhóm nút hành động đặt ở góc phải dưới */
+    .product-actions-group {
         position: absolute;
         bottom: 15px;
         right: 15px;
-        border: 1px solid #f3e8f5;
-        background: #fff;
-        color: #ff79c6;
+        z-index: 3;
+    }
+
+    .btn-action-custom {
         width: 32px;
         height: 32px;
+        padding: 0;
         border-radius: 4px;
         display: flex;
         align-items: center;
@@ -81,11 +71,26 @@
         transition: all 0.2s;
     }
 
-    .btn-add-cart:hover {
-        background: #ff79c6;
-        color: #fff;
-        border-color: #ff79c6;
+    .btn-wishlist-custom {
+        border: 1px solid #f3e8f5;
+        background: #fff;
+        color: #dc3545;
     }
+
+        .btn-wishlist-custom:hover {
+            background: #fff0f2;
+            border-color: #dc3545;
+        }
+
+    .btn-cart-custom {
+        background-color: #ff79c6;
+        color: #fff;
+    }
+
+        .btn-cart-custom:hover {
+            background-color: #e65ca3;
+            color: #fff;
+        }
 
     .text-purple {
         color: #ff79c6 !important;
@@ -101,7 +106,6 @@
         </div>
     }
     <div class="row mb-4">
-        <!-- Sidebar Danh mục -->
         <div class="col-lg-3 d-none d-lg-block category-sidebar-wrapper">
             <div class="card category-sidebar shadow-sm">
                 <div class="list-group list-group-flush">
@@ -121,7 +125,6 @@
             </div>
         </div>
 
-        <!-- Banner chính -->
         <div class="col-lg-9 col-md-12">
             <div id="heroBanner" class="carousel slide shadow-sm rounded" data-bs-ride="carousel">
                 <div class="carousel-inner rounded">
@@ -136,30 +139,6 @@
         </div>
     </div>
 
-
-
-    <!-- Danh mục nổi bật -->
-    <div class="mb-5">
-        <h4 class="fw-bold mb-3 text-dark">Danh mục nổi bật</h4>
-        <div class="row g-3">
-            @if (ViewBag.Categories != null)
-            {
-                foreach (var cat in (IEnumerable<Website_ban_sach.Models.Category>)ViewBag.Categories)
-                {
-                    <div class="col-6 col-md-2">
-                        <a asp-controller="Home" asp-action="Index" asp-route-categoryId="@cat.Id" class="text-decoration-none">
-                            <div class="card cat-item-card p-3 text-center shadow-sm" style="background-color: #fff0f6; border: 1px solid @(ViewBag.CurrentCategoryId == cat.Id ? "#ff79c6" : "transparent");">
-                                <i class="fa-solid @(string.IsNullOrEmpty(cat.Icon) ? "fa-book" : cat.Icon) text-purple fs-2 mb-2"></i>
-                                <h6 class="fw-bold text-dark small mb-1">@cat.Name</h6>
-                            </div>
-                        </a>
-                    </div>
-                }
-            }
-        </div>
-    </div>
-
-    <!-- Danh sách sản phẩm -->
     <div class="mb-5">
         <h4 class="fw-bold mb-3 text-dark">
             @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch))
@@ -191,11 +170,7 @@
                 {
                     <div class="col">
                         <div class="card product-card h-100 p-2 shadow-sm">
-                            @if (item.OldPrice.HasValue && item.OldPrice > item.Price)
-                            {
-                                int discount = (int)((1 - (item.Price / item.OldPrice.Value)) * 100);
-                                <span class="discount-tag">-@discount%</span>
-                            }
+
                             <a asp-action="Details" asp-route-id="@item.Id">
                                 <img src="@item.ImageUrl" class="card-img-top rounded" style="height: 180px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=300'">
                             </a>
@@ -211,14 +186,10 @@
                                 </div>
                                 <div>
                                     <span class="text-purple fw-bold d-block" style="font-size: 14px;">@item.Price.ToString("N0")đ</span>
-                                    @if (item.OldPrice.HasValue && item.OldPrice > item.Price)
-                                    {
-                                        <del class="text-muted" style="font-size: 12px;">@item.OldPrice.Value.ToString("N0")đ</del>
-                                    }
                                 </div>
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <div class="mt-2 pt-2 border-top d-flex gap-1 justify-content-between">
+                                    <div class="mt-2 pt-2 border-top d-flex gap-1 justify-content-between" style="margin-bottom: 35px;">
                                         <a asp-controller="ProductManager" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary py-0.5 px-2" style="font-size: 11px;">
                                             <i class="fa-solid fa-pen"></i> Sửa
                                         </a>
@@ -228,14 +199,25 @@
                                     </div>
                                 }
                             </div>
-                            
-                            <!-- Nút thêm vào giỏ hàng -->
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button type="submit" class="btn-add-cart border-0" title="Thêm vào giỏ hàng">
-                                    <i class="fa-solid fa-cart-plus"></i>
-                                </button>
-                            </form>
+
+                            <div class="d-flex gap-2 product-actions-group">
+
+                                <form asp-controller="Wishlist" asp-action="AddToWishlist" method="post" class="m-0">
+                                    <input type="hidden" name="bookId" value="@item.Id" />
+                                    <button type="submit" class="btn-action-custom btn-wishlist-custom border" title="Thêm vào yêu thích">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+
+                                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="m-0">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn-action-custom btn-cart-custom border-0" title="Thêm vào giỏ hàng">
+                                        <i class="fa-solid fa-cart-plus"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+
                         </div>
                     </div>
                 }

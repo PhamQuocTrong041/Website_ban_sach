@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Website_ban_sach.Models.WishlistItem>
+@{
+    ViewData["Title"] = "Danh sách yêu thích";
+}
+<style>
+    .wishlist-table th {
+        background-color: #21132b;
+        color: white;
+    }
+
+    .product-img-thum {
+        width: 70px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .btn-remove-wishlist {
+        color: #dc3545;
+        background: none;
+        border: none;
+        transition: color 0.2s;
+    }
+
+        .btn-remove-wishlist:hover {
+            color: #a71d2a;
+        }
+</style>
+
+<div class="container mt-5" style="min-height: 500px;">
+    <h2 class="fw-bold mb-4"><i class="fa-solid fa-heart text-purple-main me-2"></i>Danh sách yêu thích của bạn</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 border rounded bg-white shadow-sm">
+            <i class="fa-regular fa-heart text-purple-main mb-3" style="font-size: 60px;"></i>
+            <p class="text-muted">Hiện tại bạn chưa lưu cuốn sách nào vào danh sách yêu thích.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-purple px-4 mt-2">
+                <i class="fa-solid fa-arrow-left me-2"></i>Khám phá cửa hàng ngay
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive card shadow-sm">
+            <table class="table table-hover align-middle mb-0 wishlist-table">
+                <thead>
+                    <tr>
+                        <th scope="col" class="ps-4">Hình ảnh</th>
+                        <th scope="col">Tên sản phẩm</th>
+                        <th scope="col">Giá tiền</th>
+                        <th scope="col">Ngày thêm</th>
+                        <th scope="col" class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <img src="@item.Product?.ImageUrl" class="product-img-thum border" onerror="this.src='https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1000'" />
+                            </td>
+                            <td>
+                                <h6 class="fw-bold text-dark mb-0">@item.Product?.Title</h6>
+                                <small class="text-muted">Tác giả: @item.Product?.Author</small>
+                            </td>
+                            <td>
+                                <span class="text-purple-main fw-bold">@item.Product?.Price.ToString("#,##0")đ</span>
+                            </td>
+                            <td class="text-muted small">
+                                @item.CreatedDate.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                            <td class="align-middle">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+
+                                    <form asp-controller="Wishlist" asp-action="AddToCartFromWishlist" method="post" class="m-0">
+                                        <input type="hidden" name="bookId" value="@item.Product?.Id" />
+
+                                        <button type="submit" class="btn btn-purple d-flex align-items-center gap-1 py-1.5 px-3 rounded-3 fw-bold shadow-sm" style="font-size: 14px;">
+                                            <i class="fa-solid fa-cart-plus"></i> Giỏ hàng
+                                        </button>
+                                    </form>
+
+                                    <form asp-controller="Wishlist" asp-action="RemoveFromWishlist" method="post" class="m-0">
+                                        <input type="hidden" name="bookId" value="@item.Product?.Id" />
+                                        <button type="submit" class="btn btn-outline-danger py-1.5 px-2.5" title="Xóa">
+                                            <i class="fa-regular fa-trash-can"></i>
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

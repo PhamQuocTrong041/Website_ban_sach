@@ -74,9 +74,8 @@
             <div class="row align-items-center">
                 <div class="col-md-3 text-center text-md-start">
                     <a class="navbar-brand d-flex align-items-center text-purple-main fw-bold fs-3" asp-controller="Home" asp-action="Index">
-                        <i class="fa-solid fa-book-open me-2"></i> Nhóm 5
+                        <i class="fa-solid fa-book-open me-2"></i> Nhóm 2
                     </a>
-                    <small class="text-muted d-block ms-5" style="font-size: 11px; margin-top: -5px;">Trí thức mở lối tương lai</small>
                 </div>
                 <div class="col-md-5 my-2 my-md-0">
                     <form asp-controller="Home" asp-action="Index" method="get" class="input-group">
@@ -129,7 +128,7 @@
                         </a>
                     }
 
-                    <a asp-controller="Home" asp-action="Wishlist" class="nav-top-link">
+                    <a asp-controller="Wishlist" asp-action="Index" class="nav-top-link">
                         <i class="fa-regular fa-heart d-block fs-4 text-secondary mb-1"></i>
                         <span>Yêu thích</span>
                     </a>
@@ -164,9 +163,7 @@
                             </a>
                         </li>
                         <li class="nav-item"><a class="nav-link text-white px-3 py-2 text-purple-main" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                        <li class="nav-item"><a class="nav-link text-white-50 px-3 py-2" href="#">Sách mới</a></li>
-                        <li class="nav-item"><a class="nav-link text-white-50 px-3 py-2" href="#">Sách bán chạy</a></li>
-                        <li class="nav-item"><a class="nav-link text-white-50 px-3 py-2" href="#">Tác giả</a></li>
+                        <a asp-controller="Home" asp-action="Introduce" class="nav-link text-white px-3 py-2 text-purple-main">Giới thiệu Web bán sách của tụi mình</a>
                     </ul>
                 </div>
             </div>
@@ -183,8 +180,8 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-3">
-                    <h5 class="text-purple-main fw-bold mb-3"><i class="fa-solid fa-book-open me-2"></i> BookStore</h5>
-                    <p class="text-white-50 small">BookStore là nhà sách trực tuyến uy tín, cung cấp hàng ngàn đầu sách chất lượng, đa dạng thể loại với giá tốt nhất cho bạn đọc.</p>
+                    <h5 class="text-purple-main fw-bold mb-3"><i class="fa-solid fa-book-open me-2"></i> Nhóm 2</h5>
+                    <p class="text-white-50 small">Nhóm 2 là nơi bán sách trực tuyến uy tín, cung cấp hàng ngàn đầu sách chất lượng, đa dạng thể loại hàng đầu Châu Âu cho bạn đọc.</p>
                     <div class="d-flex gap-3 fs-5">
                         <a href="#" class="text-white-50"><i class="fa-brands fa-facebook"></i></a>
                         <a href="#" class="text-white-50"><i class="fa-brands fa-instagram"></i></a>
@@ -209,19 +206,15 @@
                 <div class="col-md-3">
                     <h6 class="fw-bold mb-3 text-purple-main">Thông tin liên hệ</h6>
                     <ul class="list-unstyled small d-flex flex-column gap-2 text-white-50">
-                        <li><i class="fa-solid fa-location-dot me-2 text-purple-main"></i> Đường a, xã b, quận c</li>
+                        <li><i class="fa-solid fa-location-dot me-2 text-purple-main"></i> Hutech Thu Duc Camput</li>
                         <li><i class="fa-solid fa-phone me-2 text-purple-main"></i> 0123 456 789</li>
-                        <li><i class="fa-solid fa-envelope me-2 text-purple-main"></i> support@Nhom5.vn</li>
+                        <li><i class="fa-solid fa-envelope me-2 text-purple-main"></i> Hutech@nhom2.com</li>
                     </ul>
                 </div>
             </div>
             <hr class="my-4 text-white-50">
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center small text-white-50">
-                <p class="mb-0">Nhom 5: Quốc Trọng, Vủ Nguyên, Minh Hiển</p>
-                <div class="d-flex gap-2 fs-4">
-                    <i class="fa-brands fa-cc-visa"></i>
-                    <i class="fa-brands fa-cc-mastercard"></i>
-                </div>
+                <p class="mb-0">Nhóm 2: Phạm Quốc Trọng, Phạm Vủ Nguyên, Nguyễn Minh Hiển</p>
             </div>
         </div>
     </footer>

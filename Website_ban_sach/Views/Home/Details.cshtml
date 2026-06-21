@@ -2,35 +2,40 @@
 @{
     ViewData["Title"] = Model.Title;
 }
-
 <style>
     .details-card {
         border: 1px solid #f3e8f5;
         background-color: #fff;
         border-radius: 16px;
     }
+
     .book-detail-img {
         max-height: 480px;
         width: 100%;
         object-fit: cover;
         border-radius: 12px;
     }
+
     .text-purple-main {
         color: #ff79c6 !important;
     }
+
     .bg-purple-main {
         background-color: #ff79c6 !important;
     }
+
     .btn-purple {
         background-color: #ff79c6;
         color: white;
         border: none;
         transition: background-color 0.2s;
     }
-    .btn-purple:hover {
-        background-color: #e05ca7;
-        color: white;
-    }
+
+        .btn-purple:hover {
+            background-color: #e05ca7;
+            color: white;
+        }
+
     .quantity-input {
         width: 70px;
         text-align: center;
@@ -50,12 +55,10 @@
 
     <div class="card details-card p-4 shadow-sm">
         <div class="row g-4">
-            <!-- Cột hình ảnh -->
             <div class="col-md-5">
                 <img src="@Model.ImageUrl" class="book-detail-img shadow border" onerror="this.src='https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=500'" />
             </div>
 
-            <!-- Cột thông tin sách -->
             <div class="col-md-7 d-flex flex-column justify-content-between">
                 <div>
                     <span class="badge bg-light text-dark border px-2.5 py-1.5 rounded-pill mb-2">
@@ -64,7 +67,6 @@
                     <h1 class="fw-bold text-dark mb-2" style="font-size: 2.2rem;">@Model.Title</h1>
                     <h5 class="text-secondary mb-3">Tác giả: <strong class="text-dark">@Model.Author</strong></h5>
 
-                    <!-- Đánh giá sao -->
                     <div class="d-flex align-items-center gap-2 mb-4">
                         <div class="text-warning">
                             <i class="fa-solid fa-star"></i>
@@ -73,32 +75,22 @@
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
                         </div>
-                        <span class="text-muted small">(5.0/5.0 - Đánh giá từ độc giả)</span>
                     </div>
 
                     <hr class="text-muted">
 
-                    <!-- Giá tiền -->
                     <div class="my-4">
                         <div class="d-flex align-items-baseline gap-3">
                             <h2 class="text-purple-main fw-bold m-0" style="font-size: 2rem;">@Model.Price.ToString("N0")đ</h2>
-                            @if (Model.OldPrice.HasValue && Model.OldPrice > Model.Price)
-                            {
-                                <h4 class="text-muted text-decoration-line-through m-0">@Model.OldPrice.Value.ToString("N0")đ</h4>
-                                <span class="badge bg-danger px-2 py-1 rounded">
-                                    -@((int)((1 - (Model.Price / Model.OldPrice.Value)) * 100))%
-                                </span>
-                            }
                         </div>
                     </div>
 
-                    <!-- Tình trạng kho hàng -->
                     <div class="mb-4">
                         <span class="fw-medium text-secondary">Tình trạng:</span>
                         @if (Model.StockQuantity > 0)
                         {
                             <span class="badge bg-success-subtle text-success px-2.5 py-1.5 ms-1">
-                                <i class="fa-solid fa-circle-check me-1"></i> Còn hàng (@Model.StockQuantity cuốn)
+                                <i class="fa-solid fa-circle-check me-1"></i> Còn hàng
                             </span>
                         }
                         else
@@ -109,7 +101,6 @@
                         }
                     </div>
 
-                    <!-- Mô tả sản phẩm -->
                     <div class="mb-4">
                         <h6 class="fw-bold text-dark">Mô tả tóm tắt:</h6>
                         <p class="text-muted leading-relaxed" style="font-size: 15px;">
@@ -118,33 +109,44 @@
                     </div>
                 </div>
 
-                <!-- Nút thao tác mua hàng -->
                 <div class="border-top pt-4">
-                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3">
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        
-                        @if (Model.StockQuantity > 0)
-                        {
-                            <div class="d-flex align-items-center border rounded">
-                                <button type="button" class="btn btn-light border-0 py-2 px-3 fw-bold" onclick="changeQuantity(-1)">-</button>
-                                <input type="number" name="quantity" id="quantity" class="quantity-input border-0 py-2" value="1" min="1" max="@Model.StockQuantity" readonly />
-                                <button type="button" class="btn btn-light border-0 py-2 px-3 fw-bold" onclick="changeQuantity(1)">+</button>
-                            </div>
-                            <button type="submit" class="btn btn-purple px-5 py-2.5 rounded-3 fw-bold shadow-sm d-flex align-items-center gap-2">
-                                <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ hàng
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3 m-0">
+                            <input type="hidden" name="id" value="@Model.Id" />
+
+                            @if (Model.StockQuantity > 0)
+                            {
+                                <div class="d-flex align-items-center border rounded bg-light">
+                                    <button type="button" class="btn btn-light border-0 py-2 px-3 fw-bold" onclick="changeQuantity(-1)">-</button>
+                                    <input type="number" name="quantity" id="quantity" class="quantity-input border-0 py-2 bg-light" value="1" min="1" max="@Model.StockQuantity" readonly />
+                                    <button type="button" class="btn btn-light border-0 py-2 px-3 fw-bold" onclick="changeQuantity(1)">+</button>
+                                </div>
+                                <button type="submit" class="btn btn-purple px-4 py-2.5 rounded-3 fw-bold shadow-sm d-flex align-items-center gap-2" style="height: 42px;">
+                                    <i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ hàng
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-secondary px-4 py-2.5 rounded-3 fw-bold disabled" style="height: 42px;">
+                                    <i class="fa-solid fa-circle-xmark"></i> Hết hàng tạm thời
+                                </button>
+                            }
+                        </form>
+
+                        <form asp-controller="Wishlist" asp-action="AddToWishlist" method="post" class="m-0">
+                            <input type="hidden" name="bookId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-outline-danger px-3 d-flex align-items-center justify-content-center"
+                                    style="height: 42px; width: 45px; border-radius: 8px;" title="Thêm vào danh sách yêu thích">
+                                <i class="fa-regular fa-heart fs-5"></i>
                             </button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-secondary px-5 py-2.5 rounded-3 fw-bold disabled">
-                                <i class="fa-solid fa-circle-xmark"></i> Hết hàng tạm thời
-                            </button>
-                        }
-                        
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2.5 rounded-3">
-                             Quay lại mua sắm
+                        </form>
+
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2.5 rounded-3 d-flex align-items-center" style="height: 42px;">
+                            Quay lại mua sắm
                         </a>
-                    </form>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -155,12 +157,14 @@
     <script>
         function changeQuantity(change) {
             var input = document.getElementById('quantity');
-            var currentVal = parseInt(input.value);
-            var min = parseInt(input.min);
-            var max = parseInt(input.max);
-            var newVal = currentVal + change;
-            if (newVal >= min && newVal <= max) {
-                input.value = newVal;
+            if(input) {
+                var currentVal = parseInt(input.value);
+                var min = parseInt(input.min);
+                var max = parseInt(input.max);
+                var newVal = currentVal + change;
+                if (newVal >= min && newVal <= max) {
+                    input.value = newVal;
+                }
             }
         }
     </script>
