@@ -64,6 +64,17 @@ namespace Website_ban_sach.Controllers
                     // Gán vai trò mặc định cho người dùng mới đăng ký là Customer
                     await _userManager.AddToRoleAsync(user, "Customer");
 
+                    // Tạo thông báo thành viên mới đăng ký
+                    _context.Notifications.Add(new Notification
+                    {
+                        Title = "Thành viên mới",
+                        Content = $"Người dùng '{user.UserName}' ({user.Email}) vừa đăng ký tài khoản thành công.",
+                        CreatedAt = DateTime.Now,
+                        IsRead = false,
+                        Type = "User"
+                    });
+                    await _context.SaveChangesAsync();
+
                     // Tự động đăng nhập người dùng sau khi đăng ký thành công
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");

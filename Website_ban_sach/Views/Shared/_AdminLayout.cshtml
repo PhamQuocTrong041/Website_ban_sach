@@ -1,3 +1,7 @@
+@inject Website_ban_sach.Models.ApplicationDbContext DbContext
+@{
+    int unreadCount = DbContext.Notifications.Count(n => !n.IsRead);
+}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -191,14 +195,18 @@
                         <span>Đơn hàng</span>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#">
+                <li class="menu-item" id="menu-notifications">
+                    <a asp-controller="Dashboard" asp-action="Notifications">
                         <i class="fa-solid fa-bell"></i>
                         <span>Thông báo</span>
+                        @if (unreadCount > 0)
+                        {
+                            <span class="badge rounded-pill bg-danger ms-auto" style="font-size: 10px;">@unreadCount</span>
+                        }
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#">
+                <li class="menu-item" id="menu-settings">
+                    <a asp-controller="Dashboard" asp-action="Settings">
                         <i class="fa-solid fa-gear"></i>
                         <span>Cài đặt</span>
                     </a>
@@ -237,10 +245,13 @@
             </div>
             <div class="d-flex align-items-center gap-3">
                 <span class="text-muted small"><i class="fa-regular fa-calendar me-2"></i> @DateTime.Now.ToString("dd/MM/yyyy")</span>
-                <div class="position-relative text-secondary">
+                <a asp-controller="Dashboard" asp-action="Notifications" class="position-relative text-secondary text-decoration-none">
                     <i class="fa-regular fa-bell fs-5"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 8px; padding: 3px 5px;">3</span>
-                </div>
+                    @if (unreadCount > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 8px; padding: 3px 5px;">@unreadCount</span>
+                    }
+                </a>
             </div>
         </div>
 
@@ -260,8 +271,10 @@
             
             if (path.indexOf("/Dashboard/Orders") !== -1) {
                 $("#menu-orders").addClass("active");
-            } else if (path.indexOf("/Dashboard") !== -1) {
-                $("#menu-dash").addClass("active");
+            } else if (path.indexOf("/Dashboard/Notifications") !== -1) {
+                $("#menu-notifications").addClass("active");
+            } else if (path.indexOf("/Dashboard/Settings") !== -1) {
+                $("#menu-settings").addClass("active");
             } else if (path.indexOf("/Admin") !== -1) {
                 $("#menu-users").addClass("active");
             } else if (path.indexOf("/ProductManager") !== -1) {

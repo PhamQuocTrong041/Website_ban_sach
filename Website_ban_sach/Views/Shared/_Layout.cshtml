@@ -1,9 +1,17 @@
+@inject Website_ban_sach.Models.ApplicationDbContext DbContext
+@{
+    var appSettingsList = DbContext.AppSettings.ToList();
+    var websiteName = appSettingsList.FirstOrDefault(s => s.Key == "WebsiteName")?.Value ?? "BookStore";
+    var hotline = appSettingsList.FirstOrDefault(s => s.Key == "Hotline")?.Value ?? "0123 456 789";
+    var email = appSettingsList.FirstOrDefault(s => s.Key == "Email")?.Value ?? "Hutech@nhom2.com";
+    var address = appSettingsList.FirstOrDefault(s => s.Key == "Address")?.Value ?? "Hutech Thu Duc Campus";
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - BookStore</title>
+    <title>@ViewData["Title"] - @websiteName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
@@ -74,7 +82,7 @@
             <div class="row align-items-center">
                 <div class="col-md-3 text-center text-md-start">
                     <a class="navbar-brand d-flex align-items-center text-purple-main fw-bold fs-3" asp-controller="Home" asp-action="Index">
-                        <i class="fa-solid fa-book-open me-2"></i> Nhóm 2
+                        <i class="fa-solid fa-book-open me-2"></i> @websiteName
                     </a>
                 </div>
                 <div class="col-md-5 my-2 my-md-0">
@@ -107,7 +115,7 @@
                                 <li><hr class="dropdown-divider"></li>
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <li><a class="dropdown-item py-2 fw-medium text-purple-main" asp-controller="Dashboard" asp-action="Index"><i class="fa-solid fa-gauge me-2"></i> Trang quản trị (Admin)</a></li>
+                                    <li><a class="dropdown-item py-2 fw-medium text-purple-main" asp-controller="Dashboard" asp-action="Orders"><i class="fa-solid fa-gauge me-2"></i> Trang quản trị (Admin)</a></li>
                                     <li><a class="dropdown-item py-2 fw-medium text-purple-main" asp-controller="Admin" asp-action="Index"><i class="fa-solid fa-users-gear me-2"></i> Quản lý thành viên</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                 }
@@ -180,8 +188,8 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-md-3">
-                    <h5 class="text-purple-main fw-bold mb-3"><i class="fa-solid fa-book-open me-2"></i> Nhóm 2</h5>
-                    <p class="text-white-50 small">Nhóm 2 là nơi bán sách trực tuyến uy tín, cung cấp hàng ngàn đầu sách chất lượng, đa dạng thể loại hàng đầu Châu Âu cho bạn đọc.</p>
+                    <h5 class="text-purple-main fw-bold mb-3"><i class="fa-solid fa-book-open me-2"></i> @websiteName</h5>
+                    <p class="text-white-50 small">@websiteName là nơi bán sách trực tuyến uy tín, cung cấp hàng ngàn đầu sách chất lượng, đa dạng thể loại hàng đầu Châu Âu cho bạn đọc.</p>
                     <div class="d-flex gap-3 fs-5">
                         <a href="#" class="text-white-50"><i class="fa-brands fa-facebook"></i></a>
                         <a href="#" class="text-white-50"><i class="fa-brands fa-instagram"></i></a>
@@ -206,9 +214,9 @@
                 <div class="col-md-3">
                     <h6 class="fw-bold mb-3 text-purple-main">Thông tin liên hệ</h6>
                     <ul class="list-unstyled small d-flex flex-column gap-2 text-white-50">
-                        <li><i class="fa-solid fa-location-dot me-2 text-purple-main"></i> Hutech Thu Duc Camput</li>
-                        <li><i class="fa-solid fa-phone me-2 text-purple-main"></i> 0123 456 789</li>
-                        <li><i class="fa-solid fa-envelope me-2 text-purple-main"></i> Hutech@nhom2.com</li>
+                        <li><i class="fa-solid fa-location-dot me-2 text-purple-main"></i> @address</li>
+                        <li><i class="fa-solid fa-phone me-2 text-purple-main"></i> @hotline</li>
+                        <li><i class="fa-solid fa-envelope me-2 text-purple-main"></i> @email</li>
                     </ul>
                 </div>
             </div>

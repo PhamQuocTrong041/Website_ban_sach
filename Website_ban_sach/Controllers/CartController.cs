@@ -180,6 +180,17 @@ namespace Website_ban_sach.Controllers
                     {
                         // Giảm số lượng tồn kho của sách
                         product.StockQuantity = System.Math.Max(0, product.StockQuantity - item.Quantity);
+                        if (product.StockQuantity < 10)
+                        {
+                            _context.Notifications.Add(new Notification
+                            {
+                                Title = "Sách sắp hết hàng",
+                                Content = $"Sách '{product.Title}' chỉ còn {product.StockQuantity} cuốn trong kho. Vui lòng nhập thêm hàng.",
+                                CreatedAt = System.DateTime.Now,
+                                IsRead = false,
+                                Type = "Stock"
+                            });
+                        }
                         
                         order.OrderItems.Add(new OrderItem
                         {
@@ -191,6 +202,14 @@ namespace Website_ban_sach.Controllers
                 }
 
                 _context.Orders.Add(order);
+                _context.Notifications.Add(new Notification
+                {
+                    Title = "Đơn hàng mới",
+                    Content = $"Đơn hàng mới #{order.OrderCode} vừa được đặt bởi {order.ReceiverName} với tổng tiền {order.TotalAmount.ToString("N0")}đ.",
+                    CreatedAt = System.DateTime.Now,
+                    IsRead = false,
+                    Type = "Order"
+                });
                 await _context.SaveChangesAsync();
 
                 if (model.PaymentMethod == "MOMO")

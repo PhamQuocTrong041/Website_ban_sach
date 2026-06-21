@@ -24,5 +24,7 @@ namespace Website_ban_sach.Models
         // Bảng chi tiết đơn hàng
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<AppSetting> AppSettings { get; set; }
     }
 }

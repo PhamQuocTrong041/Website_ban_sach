@@ -76,7 +76,7 @@
             <i class="fa-solid fa-circle-check animate__animated animate__bounceIn"></i>
         </div>
         <h1 class="fw-bold text-dark">Đặt hàng thành công!</h1>
-        <p class="text-muted fs-5">Cảm ơn bạn đã mua sắm tại BookStore. Mã đơn hàng của bạn là <strong class="text-purple-main">#@Model.Id</strong>.</p>
+        <p class="text-muted fs-5">Cảm ơn bạn đã mua sắm tại BookStore. Mã đơn hàng của bạn là <strong class="text-purple-main">#@Model.OrderCode</strong>.</p>
         
         @if (TempData["SuccessMessage"] != null)
         {
@@ -157,7 +157,7 @@
                                         <li class="mb-1.5"><strong>Số tài khoản:</strong> <span class="text-purple-main fw-bold">123456789999</span></li>
                                         <li class="mb-1.5"><strong>Chủ tài khoản:</strong> NHOM 5 BOOKSTORE</li>
                                         <li class="mb-1.5"><strong>Số tiền:</strong> <span class="text-purple-main fw-bold">@Model.TotalAmount.ToString("N0")đ</span></li>
-                                        <li class="mb-1.5"><strong>Nội dung:</strong> <span class="badge bg-purple-main fw-bold px-2 py-1">DH@Model.Id</span></li>
+                                        <li class="mb-1.5"><strong>Nội dung:</strong> <span class="badge bg-purple-main fw-bold px-2 py-1">DH@Model.OrderCode</span></li>
                                     </ul>
 
                                     <form asp-action="ConfirmPayment" method="post">
@@ -170,9 +170,9 @@
                                 </div>
                                 <div class="col-md-5 text-center d-flex flex-column align-items-center justify-content-center">
                                     <div class="qr-container shadow-sm mb-2">
-                                        <img src="https://img.vietqr.io/image/MB-123456789999-qr_only.png?amount=@Convert.ToInt64(Model.TotalAmount)&addInfo=DH@(Model.Id)&accountName=NHOM%205%20BOOKSTORE" 
+                                        <img src="https://img.vietqr.io/image/MB-123456789999-qr_only.png?amount=@Convert.ToInt64(Model.TotalAmount)&addInfo=DH@(Model.OrderCode)&accountName=NHOM%205%20BOOKSTORE" 
                                              class="img-fluid rounded" alt="VietQR Code" 
-                                             onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Chuyen%20khoan%20MBBank%20STK%20123456789999%20So%20tien%20@(Model.TotalAmount)%20Noi%20dung%20DH@(Model.Id)'" />
+                                             onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Chuyen%20khoan%20MBBank%20STK%20123456789999%20So%20tien%20@(Model.TotalAmount)%20Noi%20dung%20DH@(Model.OrderCode)'" />
                                     </div>
                                     <small class="text-muted" style="font-size: 11px;"><i class="fa-solid fa-scan me-1"></i> Mở ứng dụng Ngân hàng để quét</small>
                                 </div>
@@ -182,7 +182,7 @@
                         {
                             <div class="text-center py-3">
                                 <div class="text-success fs-3 mb-2"><i class="fa-solid fa-square-check"></i> Đã nhận thông tin thanh toán</div>
-                                <p class="text-muted mb-0 small">Chúng tôi đã ghi nhận yêu cầu thanh toán chuyển khoản cho đơn hàng #@Model.Id. Hệ thống đang tiến hành xử lý đơn hàng.</p>
+                                <p class="text-muted mb-0 small">Chúng tôi đã ghi nhận yêu cầu thanh toán chuyển khoản cho đơn hàng #@Model.OrderCode. Hệ thống đang tiến hành xử lý đơn hàng.</p>
                             </div>
                         }
                     }

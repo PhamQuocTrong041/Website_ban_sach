@@ -26,94 +26,9 @@ namespace Website_ban_sach.Controllers
         }
 
         // GET: /Dashboard
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            // 1. Thống kê số lượng tổng quan
-            int userCount = await _userManager.Users.CountAsync();
-            int productCount = await _context.Products.CountAsync();
-            int orderCount = await _context.Orders.CountAsync();
-            decimal totalRevenue = await _context.Orders
-                .Where(o => o.Status != "Đã hủy")
-                .SumAsync(o => (decimal?)o.TotalAmount) ?? 0;
-
-            // 2. Thống kê trạng thái đơn hàng phục vụ vẽ biểu đồ Doughnut
-            int pendingCount = await _context.Orders.CountAsync(o => o.Status == "Chờ xử lý");
-            int shippingCount = await _context.Orders.CountAsync(o => o.Status == "Đang giao");
-            int deliveredCount = await _context.Orders.CountAsync(o => o.Status == "Đã giao");
-            int cancelledCount = await _context.Orders.CountAsync(o => o.Status == "Đã hủy");
-
-            // 3. Lấy 5 đơn hàng mới đặt
-            var latestOrders = await _context.Orders
-                .OrderByDescending(o => o.OrderDate)
-                .Take(5)
-                .ToListAsync();
-
-            // 4. Lấy 5 sách bán chạy nhất
-            var topSellingGroup = await _context.OrderItems
-                .GroupBy(oi => oi.ProductId)
-                .Select(g => new
-                {
-                    ProductId = g.Key,
-                    QuantitySold = g.Sum(oi => oi.Quantity),
-                    TotalRevenue = g.Sum(oi => oi.Quantity * oi.Price)
-                })
-                .OrderByDescending(x => x.QuantitySold)
-                .Take(5)
-                .ToListAsync();
-
-            var topSellingProducts = new List<ProductSalesViewModel>();
-            foreach (var item in topSellingGroup)
-            {
-                var product = await _context.Products.FindAsync(item.ProductId);
-                if (product != null)
-                {
-                    topSellingProducts.Add(new ProductSalesViewModel
-                    {
-                        Product = product,
-                        QuantitySold = item.QuantitySold,
-                        TotalRevenue = item.TotalRevenue
-                    });
-                }
-            }
-
-            // 5. Chuẩn bị dữ liệu vẽ biểu đồ Doanh thu 7 ngày gần đây nhất
-            var last7Days = Enumerable.Range(0, 7)
-                .Select(i => DateTime.Today.AddDays(-i))
-                .OrderBy(d => d)
-                .ToList();
-
-            var dailyRevenueList = new List<decimal>();
-            var dailyLabelsList = new List<string>();
-
-            foreach (var day in last7Days)
-            {
-                var nextDay = day.AddDays(1);
-                var revenue = await _context.Orders
-                    .Where(o => o.OrderDate >= day && o.OrderDate < nextDay && o.Status != "Đã hủy")
-                    .SumAsync(o => (decimal?)o.TotalAmount) ?? 0;
-
-                dailyRevenueList.Add(revenue);
-                dailyLabelsList.Add(day.ToString("dd/MM"));
-            }
-
-            ViewBag.DailyRevenueLabels = dailyLabelsList;
-            ViewBag.DailyRevenueValues = dailyRevenueList;
-
-            var stats = new DashboardStatsViewModel
-            {
-                UserCount = userCount,
-                ProductCount = productCount,
-                OrderCount = orderCount,
-                TotalRevenue = totalRevenue,
-                LatestOrders = latestOrders,
-                TopSellingProducts = topSellingProducts,
-                PendingCount = pendingCount,
-                ShippingCount = shippingCount,
-                DeliveredCount = deliveredCount,
-                CancelledCount = cancelledCount
-            };
-
-            return View(stats);
+            return RedirectToAction(nameof(Orders));
         }
 
         // GET: /Dashboard/Orders
@@ -152,6 +67,85 @@ namespace Website_ban_sach.Controllers
 
             TempData["SuccessMessage"] = $"Cập nhật trạng thái đơn hàng #{id} thành '{status}' thành công.";
             return RedirectToAction(nameof(Orders));
+        }
+
+        // GET: /Dashboard/Notifications
+        public async Task<IActionResult> Notifications()
+        {
+            var notifications = await _context.Notifications
+                .OrderByDescending(n => n.CreatedAt)
+                .ToListAsync();
+            return View(notifications);
+        }
+
+        // POST: /Dashboard/MarkAsRead/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAsRead(int id)
+        {
+            var notification = await _context.Notifications.FindAsync(id);
+            if (notification != null)
+            {
+                notification.IsRead = true;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Notifications));
+        }
+
+        // POST: /Dashboard/MarkAllAsRead
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAllAsRead()
+        {
+            var unread = await _context.Notifications.Where(n => !n.IsRead).ToListAsync();
+            foreach (var n in unread)
+            {
+                n.IsRead = true;
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Notifications));
+        }
+
+        // POST: /Dashboard/DeleteNotification/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteNotification(int id)
+        {
+            var notification = await _context.Notifications.FindAsync(id);
+            if (notification != null)
+            {
+                _context.Notifications.Remove(notification);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Notifications));
+        }
+
+        // GET: /Dashboard/Settings
+        public async Task<IActionResult> Settings()
+        {
+            var settings = await _context.AppSettings.ToListAsync();
+            return View(settings);
+        }
+
+        // POST: /Dashboard/SaveSettings
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveSettings(Dictionary<string, string> settings)
+        {
+            if (settings != null)
+            {
+                foreach (var item in settings)
+                {
+                    var setting = await _context.AppSettings.FirstOrDefaultAsync(s => s.Key == item.Key);
+                    if (setting != null)
+                    {
+                        setting.Value = item.Value ?? string.Empty;
+                    }
+                }
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Cập nhật cấu hình hệ thống thành công!";
+            }
+            return RedirectToAction(nameof(Settings));
         }
     }
 }

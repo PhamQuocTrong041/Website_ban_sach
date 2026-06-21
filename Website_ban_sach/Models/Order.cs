@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Website_ban_sach.Models
 {
@@ -11,6 +12,9 @@ namespace Website_ban_sach.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [NotMapped]
+        public string OrderCode => new Random(Id).Next(0, 10000).ToString("D4");
 
         public string UserId { get; set; } = string.Empty;
 

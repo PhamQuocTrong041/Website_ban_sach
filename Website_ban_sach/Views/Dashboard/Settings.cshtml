@@ -1,0 +1,61 @@
+@model IEnumerable<Website_ban_sach.Models.AppSetting>
+@{
+    ViewData["Title"] = "Cấu hình hệ thống";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-gear me-2 text-purple-main"></i> Cấu Hình Hệ Thống</h3>
+            <p class="text-muted mb-0 small">Thiết lập thông tin hiển thị của cửa hàng, thông tin liên hệ và cổng thanh toán.</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 rounded-3 mb-4" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card dash-card shadow-sm rounded-3">
+        <div class="card-body p-4">
+            <form asp-action="SaveSettings" method="post">
+                @Html.AntiForgeryToken()
+                
+                <!-- Nhóm General -->
+                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-circle-info text-purple-main me-2"></i> Cấu hình chung</h5>
+                <div class="row g-3 mb-4">
+                    @foreach (var setting in Model.Where(s => s.Group == "General"))
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary small">@setting.DisplayName</label>
+                            <input type="text" name="settings[@setting.Key]" value="@setting.Value" class="form-control border-purple-main" required />
+                        </div>
+                    }
+                </div>
+
+                <!-- Nhóm Contact -->
+                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="fa-solid fa-address-book text-purple-main me-2"></i> Thông tin liên hệ</h5>
+                <div class="row g-3 mb-4">
+                    @foreach (var setting in Model.Where(s => s.Group == "Contact"))
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-secondary small">@setting.DisplayName</label>
+                            <input type="text" name="settings[@setting.Key]" value="@setting.Value" class="form-control border-purple-main" required />
+                        </div>
+                    }
+                </div>
+
+
+                <div class="mt-4 pt-3 border-top text-end">
+                    <button type="submit" class="btn btn-purple px-5 py-2.5 rounded-pill fw-bold shadow-sm">
+                        <i class="fa-solid fa-floppy-disk me-2"></i> Lưu cấu hình hệ thống
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

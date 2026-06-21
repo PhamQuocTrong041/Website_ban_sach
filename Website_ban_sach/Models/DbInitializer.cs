@@ -124,6 +124,38 @@ namespace Website_ban_sach.Models
                 await context.Products.AddRangeAsync(products);
                 await context.SaveChangesAsync();
             }
+
+            // 5. Seed Cài đặt mặc định (AppSettings)
+            if (!await context.AppSettings.AnyAsync())
+            {
+                var settings = new List<AppSetting>
+                {
+                    new AppSetting { Key = "WebsiteName", Value = "BookStore Nhóm 2", DisplayName = "Tên Website", Group = "General" },
+                    new AppSetting { Key = "Hotline", Value = "0123 456 789", DisplayName = "Số điện thoại Hotline", Group = "Contact" },
+                    new AppSetting { Key = "Email", Value = "Hutech@nhom2.com", DisplayName = "Email liên hệ", Group = "Contact" },
+                    new AppSetting { Key = "Address", Value = "Hutech Thu Duc Campus", DisplayName = "Địa chỉ", Group = "Contact" },
+                    new AppSetting { Key = "MoMoPartnerCode", Value = "MOMO2AI520260621_TEST", DisplayName = "MoMo Partner Code", Group = "Payment" },
+                    new AppSetting { Key = "MoMoAccessKey", Value = "SzVLICup7M4fILHt", DisplayName = "MoMo Access Key", Group = "Payment" },
+                    new AppSetting { Key = "MoMoSecretKey", Value = "MBzpFanPjal183nFABbBqfxcZrx4PPMG", DisplayName = "MoMo Secret Key", Group = "Payment" }
+                };
+
+                await context.AppSettings.AddRangeAsync(settings);
+                await context.SaveChangesAsync();
+            }
+
+            // 6. Seed Thông báo mẫu ban đầu (Notifications)
+            if (!await context.Notifications.AnyAsync())
+            {
+                var notifications = new List<Notification>
+                {
+                    new Notification { Title = "Hệ thống sẵn sàng", Content = "Hệ thống quản trị Website bán sách Nhóm 2 đã khởi tạo thành công.", CreatedAt = DateTime.Now.AddDays(-2), IsRead = true, Type = "Info" },
+                    new Notification { Title = "Sách sắp hết hàng", Content = "Sách 'Nghĩ Giàu Làm Giàu' chỉ còn 3 cuốn trong kho. Vui lòng nhập thêm hàng.", CreatedAt = DateTime.Now.AddDays(-1), IsRead = false, Type = "Stock" },
+                    new Notification { Title = "Đơn hàng mẫu", Content = "Đơn hàng #3412 đặt bởi Nguyễn Minh Hiển đã thanh toán thành công qua MoMo.", CreatedAt = DateTime.Now, IsRead = false, Type = "Order" }
+                };
+
+                await context.Notifications.AddRangeAsync(notifications);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -1,0 +1,97 @@
+@model IEnumerable<Website_ban_sach.Models.Notification>
+@{
+    ViewData["Title"] = "Thông báo hệ thống";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div>
+            <h3 class="fw-bold text-dark mb-1"><i class="fa-solid fa-bell me-2 text-purple-main"></i> Thông Báo Hệ Thống</h3>
+            <p class="text-muted mb-0 small">Theo dõi các hoạt động, giao dịch và cảnh báo tồn kho của Website.</p>
+        </div>
+        @if (Model.Any(n => !n.IsRead))
+        {
+            <form asp-action="MarkAllAsRead" method="post" class="m-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-purple px-3 py-2 rounded-pill small shadow-sm">
+                    <i class="fa-solid fa-check-double me-1"></i> Đánh dấu đã đọc tất cả
+                </button>
+            </form>
+        }
+    </div>
+
+    <div class="card dash-card shadow-sm rounded-3">
+        <div class="card-body p-4">
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="fa-solid fa-bell-slash fs-1 d-block mb-3 text-purple-main"></i>
+                    Không có thông báo nào trong hệ thống.
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var item in Model)
+                    {
+                        string borderClass = "border-info";
+                        string iconClass = "fa-circle-info text-info";
+                        string bgClass = "bg-info-subtle";
+
+                        if (item.Type == "Order")
+                        {
+                            borderClass = "border-warning";
+                            iconClass = "fa-file-invoice-dollar text-warning";
+                            bgClass = "bg-warning-subtle";
+                        }
+                        else if (item.Type == "Stock")
+                        {
+                            borderClass = "border-danger";
+                            iconClass = "fa-triangle-exclamation text-danger";
+                            bgClass = "bg-danger-subtle";
+                        }
+                        else if (item.Type == "User")
+                        {
+                            borderClass = "border-success";
+                            iconClass = "fa-user-plus text-success";
+                            bgClass = "bg-success-subtle";
+                        }
+
+                        <div class="d-flex align-items-center justify-content-between p-3 border-start border-4 rounded-3 @(item.IsRead ? "bg-light border-secondary-subtle" : bgClass + " " + borderClass) shadow-sm" style="transition: all 0.2s;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="fs-4">
+                                    <i class="fa-solid @iconClass"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1 text-dark @(item.IsRead ? "text-muted" : "")">@item.Title</h6>
+                                    <p class="mb-1 text-secondary small">@item.Content</p>
+                                    <small class="text-muted" style="font-size: 11px;"><i class="fa-regular fa-clock me-1"></i>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                @if (!item.IsRead)
+                                {
+                                    <form asp-action="MarkAsRead" method="post" class="m-0">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary px-2 py-1 rounded" title="Đánh dấu đã đọc">
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                    </form>
+                                }
+                                <form asp-action="DeleteNotification" method="post" class="m-0" onsubmit="return confirm('Bạn có chắc muốn xóa thông báo này?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-2 py-1 rounded" title="Xóa thông báo">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
