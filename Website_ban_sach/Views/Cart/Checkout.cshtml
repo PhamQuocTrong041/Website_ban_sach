@@ -26,6 +26,24 @@
     .text-purple-main {
         color: #ff79c6 !important;
     }
+    .payment-method-card {
+        border: 2px solid #f3e8f5 !important;
+        background-color: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+    .payment-method-card:hover {
+        border-color: #ff79c6 !important;
+        transform: translateY(-2px);
+    }
+    .payment-method-card:has(input[type="radio"]:checked) {
+        border-color: #ff79c6 !important;
+        background-color: #fff0f8 !important;
+        box-shadow: 0 4px 12px rgba(255, 121, 198, 0.15);
+    }
+    .payment-method-card input[type="radio"]:checked ~ i {
+        color: #ff79c6 !important;
+    }
 </style>
 
 <div class="container my-5" style="min-height: 500px;">
@@ -57,6 +75,35 @@
                         <label asp-for="ReceiverAddress" class="form-label fw-medium text-secondary small"></label>
                         <textarea asp-for="ReceiverAddress" rows="3" class="form-control" placeholder="Nhập đầy đủ địa chỉ giao hàng (số nhà, tên đường, phường/xã, quận/huyện...)..."></textarea>
                         <span asp-validation-for="ReceiverAddress" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Lựa chọn phương thức thanh toán -->
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-secondary small">Phương thức thanh toán</label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="payment-method-card text-center p-3 rounded-3 d-flex flex-column align-items-center justify-content-center h-100">
+                                    <input type="radio" asp-for="PaymentMethod" value="COD" checked class="d-none" />
+                                    <i class="fa-solid fa-truck-fast text-secondary fs-3 mb-2"></i>
+                                    <span class="fw-bold text-dark small d-block">COD (Nhận hàng trả tiền)</span>
+                                    <small class="text-muted text-center" style="font-size: 11px; max-width: 180px;">Thanh toán bằng tiền mặt khi giao hàng tận nơi</small>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="payment-method-card text-center p-3 rounded-3 d-flex flex-column align-items-center justify-content-center h-100">
+                                    <input type="radio" asp-for="PaymentMethod" value="BankTransfer" class="d-none" />
+                                    <i class="fa-solid fa-building-columns text-secondary fs-3 mb-2"></i>
+                                    <span class="fw-bold text-dark small d-block">Chuyển khoản ngân hàng</span>
+                                    <small class="text-muted text-center" style="font-size: 11px; max-width: 180px;">Quét mã QR VietQR chuyển khoản nhanh bằng điện thoại</small>
+                                </label>
+                            </div>
+                        </div>
+                        <span asp-validation-for="PaymentMethod" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Hướng dẫn / Thông báo nhanh -->
+                    <div id="payment-note" class="alert alert-light border small text-secondary mb-4" style="background-color: #faf6fc;">
+                        <i class="fa-solid fa-circle-info text-purple-main me-1"></i> Bạn sẽ thanh toán bằng tiền mặt trực tiếp cho nhân viên giao hàng khi nhận được sách.
                     </div>
 
                     <div class="d-flex gap-3">
@@ -115,4 +162,16 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(document).ready(function () {
+            $('input[name="PaymentMethod"]').change(function () {
+                var selectedVal = $(this).val();
+                if (selectedVal === 'COD') {
+                    $('#payment-note').html('<i class="fa-solid fa-circle-info text-purple-main me-1"></i> Bạn sẽ thanh toán bằng tiền mặt trực tiếp cho nhân viên giao hàng khi nhận được sách.');
+                } else {
+                    $('#payment-note').html('<i class="fa-solid fa-circle-info text-purple-main me-1"></i> Hệ thống sẽ tạo mã QR và thông tin chuyển khoản ngân hàng sau khi bạn nhấn nút "Xác nhận đặt hàng".');
+                }
+            });
+        });
+    </script>
 }

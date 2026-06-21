@@ -36,6 +36,13 @@ namespace Website_ban_sach.Models
         [Display(Name = "Tổng tiền")]
         public decimal TotalAmount { get; set; }
 
+        [Required(ErrorMessage = "Phương thức thanh toán không được để trống")]
+        [Display(Name = "Phương thức thanh toán")]
+        public string PaymentMethod { get; set; } = "COD"; // COD, BankTransfer
+
+        [Display(Name = "Trạng thái thanh toán")]
+        public string PaymentStatus { get; set; } = "Chưa thanh toán"; // Chưa thanh toán, Đã thanh toán
+
         [Display(Name = "Trạng thái đơn hàng")]
         public string Status { get; set; } = "Chờ xử lý"; // Chờ xử lý, Đang giao, Đã giao, Đã hủy
 

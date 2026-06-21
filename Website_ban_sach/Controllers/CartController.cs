@@ -167,6 +167,8 @@ namespace Website_ban_sach.Controllers
                     ReceiverPhone = model.ReceiverPhone,
                     ReceiverAddress = model.ReceiverAddress,
                     TotalAmount = cart.Sum(i => i.TotalPrice),
+                    PaymentMethod = model.PaymentMethod,
+                    PaymentStatus = "Chưa thanh toán",
                     Status = "Chờ xử lý"
                 };
 
@@ -193,13 +195,65 @@ namespace Website_ban_sach.Controllers
                 // Xóa giỏ hàng trong session
                 HttpContext.Session.Remove(CART_KEY);
 
-                TempData["SuccessMessage"] = "Đơn hàng của bạn đã được đặt thành công! Chúng tôi sẽ liên hệ giao hàng sớm nhất.";
-                return RedirectToAction("Index", "Home");
+                TempData["SuccessMessage"] = "Đơn hàng của bạn đã được đặt thành công!";
+                return RedirectToAction(nameof(CheckoutSuccess), new { id = order.Id });
             }
 
             // Nếu model có lỗi, hiển thị lại trang kèm lỗi
             ViewBag.CartItems = cart;
             return View(model);
+        }
+
+        // GET: /Cart/CheckoutSuccess/5
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> CheckoutSuccess(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null || (order.UserId != user.Id && !User.IsInRole("Admin")))
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
+
+        // POST: /Cart/ConfirmPayment/5
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmPayment(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Challenge();
+            }
+
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
+            if (order == null || (order.UserId != user.Id && !User.IsInRole("Admin")))
+            {
+                return NotFound();
+            }
+
+            if (order.PaymentStatus != "Đã thanh toán")
+            {
+                order.PaymentStatus = "Đã thanh toán";
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Xác nhận thanh toán đơn hàng thành công!";
+            }
+
+            return RedirectToAction(nameof(CheckoutSuccess), new { id = order.Id });
         }
 
         // Helper: Lấy danh sách sản phẩm trong giỏ hàng từ Session
