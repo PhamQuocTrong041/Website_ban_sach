@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Trang chủ";
 }
-
 <style>
     .category-sidebar .list-group-item {
         padding: 10px 15px;
@@ -225,3 +224,63 @@
         </div>
     </div>
 </div>
+
+<!-- ======================================================== -->
+<!-- MODAL POPUP GIỚI THIỆU CHÀO MỪNG (TỰ ĐỘNG HIỆN 1 LẦN DUY NHẤT) -->
+<div class="modal fade" id="welcomeIntroModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="welcomeIntroModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(255, 121, 198, 0.2);">
+
+            <div class="modal-body text-center p-5 position-relative">
+
+                <!-- Icon nhận diện màu hồng cá tính -->
+                <div class="mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: #fff0f8; color: #ff79c6; border-radius: 50%; margin: 0 auto;">
+                    <i class="fa-solid fa-book-open fs-2"></i>
+                </div>
+
+                <!-- Tiêu đề -->
+                <h2 class="fw-bold mb-4 text-dark" id="welcomeIntroModalLabel" style="font-size: 2.1rem;">
+                    Giới Thiệu Về <span style="color: #ff79c6;">Website Của Tụi Mình</span>
+                </h2>
+
+                <!-- Đoạn văn giới thiệu thương hiệu bựa + uy tín -->
+                <p class="text-secondary mx-auto mb-4" style="max-width: 700px; font-size: 1.05rem; line-height: 1.7; text-align: justify;">
+                    Chào mừng bạn đến với hệ thống phân phối tri thức mang tầm vóc vũ trụ của nhóm tụi mình!
+                    Được vận hành trên nền tảng công nghệ tối tân bằng tất cả mồ hôi, nước mắt và hàng chục ly trà sữa mang đi,
+                    website này sinh ra với sứ mệnh tối thượng là mang những cuốn sách chất lượng nhất đến tận tay bạn.
+                    Tụi mình cam kết sách chuẩn chỉnh 100%, giao diện mượt mà và bảo mật tuyệt đối.
+                    Nói là "tụi mình" cho đối tác và thầy cô nghe uy tín, sang trang vậy thôi, chứ thực ra từ thiết kế giao diện màu hồng cá tính này,
+                    viết code backend C#, cài cắm SQL Server cho đến sửa bug sấp mặt lúc 3 giờ sáng đều do một mình tui gánh team từ đầu tới cuối.
+                    Nếu bạn tìm thấy một cuốn sách hay giúp thay đổi cuộc đời, đó là công lao của tác giả; còn nếu hệ thống chạy mượt không một vết xước,
+                    đó hoàn toàn là nhờ sự đẹp trai và kiên trì của tui. Chúc bạn có những trải nghiệm mua sắm tuyệt vời và không bị deadline đè bẹp như tui nhé!
+                </p>
+
+                <hr class="my-4 opacity-25" style="color: #ced4da;">
+
+                <!-- Nút đóng popup để lướt trang chủ mua hàng -->
+                <div class="mt-4">
+                    <button type="button" class="btn shadow-sm text-white fw-bold px-4 py-2.5 rounded-pill" data-bs-dismiss="modal" style="background-color: #ff79c6; transition: all 0.2s; border: none;" onmouseover="this.style.backgroundColor='#e05ca7'" onmouseout="this.style.backgroundColor='#ff79c6'">
+                        <i class="fa-solid fa-cart-shopping me-2"></i> Ghé trang chủ mua sách ủng hộ tui đi
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Kiểm tra xem trình duyệt đã lưu trạng thái xem popup chưa
+            if (!sessionStorage.getItem('hasSeenWelcomeIntro')) {
+                // Khởi tạo và hiển thị Modal lên
+                var myModal = new bootstrap.Modal(document.getElementById('welcomeIntroModal'));
+                myModal.show();
+
+                // Đánh dấu là đã xem để không bị lặp lại khi chuyển hướng hoặc F5
+                sessionStorage.setItem('hasSeenWelcomeIntro', 'true');
+            }
+        });
+    </script>
+}
